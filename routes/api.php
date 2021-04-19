@@ -23,7 +23,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['namespace'=>'\App\Http\Controllers','middleware'=>'auth:api'],function() {
     Route::get('users', 'UserController@getAllUsers');
     Route::apiResource('category', 'CategoryController');
+    Route::apiResource('brand', 'BrandController');
+    Route::apiResource('units', 'UnitController');
     Route::apiResource('sub-category', 'SubCategoryController');
+    Route::apiResource('products', 'ProductController');
 });
 
 Route::group(['namespace'=>'\App\Http\Controllers'],function(){
