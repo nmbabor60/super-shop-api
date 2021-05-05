@@ -2,7 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e6d70a98-34dd-4363-8e42-b8d84477b5e2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/PurchaseController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/SupplierController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Inventory.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/InventoryChallan.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Purchase.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/PurchaseItem.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Supplier.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2021_04_24_102939_create_suppliers_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2021_05_05_102139_create_purchases_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2021_05_05_102255_create_purchase_items_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2021_05_05_102448_create_inventories_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2021_05_05_102508_create_inventory_challans_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
     </list>
@@ -194,7 +206,14 @@
       <workItem from="1618482142239" duration="4481000" />
       <workItem from="1618641521762" duration="1222000" />
       <workItem from="1618741273236" duration="2247000" />
-      <workItem from="1618826112353" duration="3853000" />
+      <workItem from="1618826112353" duration="4498000" />
+      <workItem from="1618899341489" duration="285000" />
+      <workItem from="1619258837504" duration="2664000" />
+      <workItem from="1619432914139" duration="6000" />
+      <workItem from="1619693279650" duration="341000" />
+      <workItem from="1619950323406" duration="1892000" />
+      <workItem from="1619955287631" duration="7000" />
+      <workItem from="1620209606435" duration="5408000" />
     </task>
     <servers />
   </component>
