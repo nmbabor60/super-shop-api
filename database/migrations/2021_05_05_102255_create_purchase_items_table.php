@@ -19,11 +19,9 @@ class CreatePurchaseItemsTable extends Migration
             $table->foreign('purchase_id')->references('id')->on('purchases')->onDelete('cascade');
             $table->bigInteger('product_id')->unsigned();
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->bigInteger('big_unit_price')->unsigned();
-            $table->foreign('big_unit_price')->references('id')->on('units')->onDelete('cascade');
+            $table->bigInteger('big_unit_price')->unsigned()->nullable();
             $table->bigInteger('small_unit_price')->unsigned();
-            $table->foreign('small_unit_price')->references('id')->on('units')->onDelete('cascade');
-            $table->integer('big_unit_qty')->nullable();
+            $table->integer('big_unit_qty')->nullable()->nullable();
             $table->integer('small_unit_qty');
             $table->timestamps();
         });

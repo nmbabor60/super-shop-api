@@ -19,11 +19,11 @@ class CreateInventoryChallansTable extends Migration
             $table->foreign('inventory_id')->references('id')->on('inventories');
             $table->bigInteger('product_id')->unsigned();
             $table->foreign('product_id')->references('id')->on('products');
-            $table->bigInteger('big_unit_sales_price')->unsigned();
+            $table->bigInteger('big_unit_sales_price')->unsigned()->nullable();
             $table->bigInteger('small_unit_sales_price')->unsigned();
-            $table->bigInteger('big_unit_cost_price')->unsigned();
+            $table->bigInteger('big_unit_cost_price')->unsigned()->nullable();
             $table->bigInteger('small_unit_cost_price')->unsigned();
-            $table->bigInteger('big_unit_qty')->unsigned();
+            $table->bigInteger('big_unit_qty')->unsigned()->nullable();
             $table->bigInteger('small_unit_qty')->unsigned();
             $table->timestamps();
         });

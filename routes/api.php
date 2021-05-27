@@ -28,6 +28,7 @@ Route::group(['namespace'=>'\App\Http\Controllers','middleware'=>'auth:api'],fun
     Route::apiResource('sub-category', 'SubCategoryController');
     Route::apiResource('products', 'ProductController');
     Route::apiResource('supplier', 'SupplierController');
+    Route::apiResource('purchase', 'PurchaseController');
 });
 
 Route::group(['namespace'=>'\App\Http\Controllers'],function(){

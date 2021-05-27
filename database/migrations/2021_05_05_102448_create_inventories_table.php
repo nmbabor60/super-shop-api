@@ -17,9 +17,9 @@ class CreateInventoriesTable extends Migration
             $table->id();
             $table->bigInteger('product_id')->unsigned();
             $table->foreign('product_id')->references('id')->on('products');
-            $table->bigInteger('available_big_unit_qty')->unsigned();
+            $table->bigInteger('available_big_unit_qty')->unsigned()->nullable();
             $table->bigInteger('available_small_unit_qty')->unsigned();
-            $table->bigInteger('big_unit_sales_price')->unsigned();
+            $table->bigInteger('big_unit_sales_price')->unsigned()->nullable();
             $table->bigInteger('small_unit_sales_price')->unsigned();
             $table->timestamps();
         });

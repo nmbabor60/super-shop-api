@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Inventory;
+use App\Models\InventoryChallan;
 use App\Models\Purchase;
 use App\Models\PurchaseItem;
 use Illuminate\Http\Request;
@@ -34,7 +36,7 @@ class PurchaseController extends Controller
         'total_amount' , 'created_by',
 
         'items':[
-            {purchase_id, product_id, big_unit_price, small_unit_price, big_unit_qty, small_unit_qty, big_unit_sales_price,small_unit_sales_price},
+            {purchase_id, product_id, big_unit_price, small_unit_price, big_unit_qty, small_unit_qty, big_unit_sales_price,small_unit_sales_price,big_unit_cost_price,small_unit_cost_price},
 
             {purchase_id, product_id, big_unit_price, small_unit_price, big_unit_qty, small_unit_qty, big_unit_sales_price,small_unit_sales_price},
         ]
@@ -44,17 +46,19 @@ class PurchaseController extends Controller
         DB::beginTransaction();
     try{
         $input = $request->all();
+        //return response()->json($input,201);
         $validator = \Validator::make($input,[
             'total_amount'=>'required',
             'supplier_id'=>'required',
             'challan_no'=>'required',
-            'items.product_id'=>'required',
-            'items.big_unit_qty'=>'required',
+            'items.*.product_id'=>'required',
+            'items.*.small_unit_qty'=>'required',
         ]);
         if($validator->fails()){
             return response()->json(['errors'=>$validator->errors()],403);
         }
         $input['created_by'] = \Auth::user()->id;
+        /* Start Purchase  */
         $purchaseInput = [
             'purchase_date'=>date('Y-m-d',strtotime($request->purchase_date)),
             'challan_no'=>$request->challan_no,
@@ -64,22 +68,67 @@ class PurchaseController extends Controller
             'created_by'=>\Auth::user()->id
         ];
         $purchase = Purchase::create($purchaseInput);
-        foreach ($request->items as $item){
+        foreach ($request->items as $singleItem){
+            $item = (object) $singleItem;
             $purchaseItemInput = [
                 'purchase_id'=>$purchase->id,
                 'product_id'=>$item->product_id,
-                'big_unit_price'=>$item->big_unit_price,
+                'big_unit_price'=>$item->big_unit_price??null,
                 'small_unit_price'=>$item->small_unit_price,
-                'big_unit_qty'=>$item->big_unit_qty,
-                'small_unit_qty'=>$item->big_unit_qty
+                'big_unit_qty'=>$item->big_unit_qty??null,
+                'small_unit_qty'=>$item->small_unit_qty
             ];
             $purchaseItem = PurchaseItem::create($purchaseItemInput);
+
+            // Start Inventory/Stock
+            $existProduct = Inventory::where('product_id',$item->product_id)->first();
+            $available_big_unit_qty = $item->big_unit_qty ?? 0;
+            $available_small_unit_qty = $item->small_unit_qty;
+            if($existProduct!=''){
+                $available_big_unit_qty += $existProduct->available_big_unit_qty;
+                //$available_big_unit_qty = $available_big_unit_qty + $existProduct->available_big_unit_qty;
+                $available_small_unit_qty += $existProduct->available_small_unit_qty;
+
+            }
+
+
+            $inventoryInput = [
+                'product_id'=>$item->product_id,
+                'available_big_unit_qty'=>$available_big_unit_qty,
+                'available_small_unit_qty'=>$available_small_unit_qty,
+                'big_unit_sales_price'=>$item->big_unit_sales_price?? null,
+                'small_unit_sales_price'=>$item->small_unit_sales_price,
+            ];
+            if($existProduct!=''){
+               $existProduct->update($inventoryInput);
+                $inventory = $existProduct;
+            }else{
+                $inventory = Inventory::create($inventoryInput);
+            }
+            $inventoryChallan = [
+                'inventory_id'=>$inventory->id,
+                'product_id'=>$item->product_id,
+                'big_unit_sales_price'=>$item->big_unit_sales_price?? null,
+                'small_unit_sales_price'=>$item->small_unit_sales_price,
+                'big_unit_cost_price'=>$item->big_unit_price?? null,
+                'small_unit_cost_price'=>$item->small_unit_price,
+                'big_unit_qty'=>$item->big_unit_qty?? null,
+                'small_unit_qty'=>$item->small_unit_qty,
+            ];
+            $inventoryChallan = InventoryChallan::create($inventoryChallan);
+
         }
 
-        DB::commit();
-            return response()->json("Successfully Inserted",201);
 
-        }catch(\Exception $e){
+
+
+
+
+
+        DB::commit();
+        return response()->json("Successfully Inserted",201);
+
+        }catch(Exception $e){
         DB::rollback();
             return response()->json(['error'=>$e->errorInfo[2]],500);
         }
