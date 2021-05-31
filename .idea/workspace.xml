@@ -4,10 +4,6 @@
     <list default="true" id="e6d70a98-34dd-4363-8e42-b8d84477b5e2" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/PurchaseController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/PurchaseController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2021_05_05_102255_create_purchase_items_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_05_05_102255_create_purchase_items_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2021_05_05_102448_create_inventories_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_05_05_102448_create_inventories_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2021_05_05_102508_create_inventory_challans_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_05_05_102508_create_inventory_challans_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -211,6 +207,10 @@
       <workItem from="1621319793475" duration="109000" />
       <workItem from="1621692265582" duration="2555000" />
       <workItem from="1622122390143" duration="4587000" />
+      <workItem from="1622128653488" duration="487000" />
+      <workItem from="1622264751978" duration="56000" />
+      <workItem from="1622298548922" duration="241000" />
+      <workItem from="1622469759867" duration="2895000" />
     </task>
     <servers />
   </component>

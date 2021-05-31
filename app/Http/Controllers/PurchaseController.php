@@ -30,18 +30,35 @@ class PurchaseController extends Controller
     public function store(Request $request)
     {
 
-        /*{
-        'purchase_date':'2021-04-12',
-        'challan_no':'1231', 'supplier_id', 'note',
-        'total_amount' , 'created_by',
+        /*
+        {
+            "purchase_date":"2021-05-26",
+            "challan_no":"r2424",
+            "supplier_id":2,
+            "note":"First Purchase",
+            "total_amount":106000,
+            "created_by":1,
+            "items":[
+                {
+                    "product_id":1,
+                    "small_unit_price":21000,
+                    "small_unit_qty":4,
+                    "small_unit_sales_price":22000,
 
-        'items':[
-            {purchase_id, product_id, big_unit_price, small_unit_price, big_unit_qty, small_unit_qty, big_unit_sales_price,small_unit_sales_price,big_unit_cost_price,small_unit_cost_price},
+                    "big_unit_price":21000 (nullable),
+                    "big_unit_qty":4  (nullable),
+                    "big_unit_sales_price":22000  (nullable)
+                },
+                {
+                    "product_id":2,
+                    "small_unit_price":11000,
+                    "small_unit_qty":2,
+                    "small_unit_sales_price":12000
+                }
+            ]
+        }
 
-            {purchase_id, product_id, big_unit_price, small_unit_price, big_unit_qty, small_unit_qty, big_unit_sales_price,small_unit_sales_price},
-        ]
-
-        }*/
+         */
 
         DB::beginTransaction();
     try{
@@ -68,6 +85,9 @@ class PurchaseController extends Controller
             'created_by'=>\Auth::user()->id
         ];
         $purchase = Purchase::create($purchaseInput);
+        // End Purchase Table Work
+
+        // Start single product purchase
         foreach ($request->items as $singleItem){
             $item = (object) $singleItem;
             $purchaseItemInput = [
@@ -79,7 +99,6 @@ class PurchaseController extends Controller
                 'small_unit_qty'=>$item->small_unit_qty
             ];
             $purchaseItem = PurchaseItem::create($purchaseItemInput);
-
             // Start Inventory/Stock
             $existProduct = Inventory::where('product_id',$item->product_id)->first();
             $available_big_unit_qty = $item->big_unit_qty ?? 0;
@@ -88,7 +107,6 @@ class PurchaseController extends Controller
                 $available_big_unit_qty += $existProduct->available_big_unit_qty;
                 //$available_big_unit_qty = $available_big_unit_qty + $existProduct->available_big_unit_qty;
                 $available_small_unit_qty += $existProduct->available_small_unit_qty;
-
             }
 
 
@@ -116,19 +134,11 @@ class PurchaseController extends Controller
                 'small_unit_qty'=>$item->small_unit_qty,
             ];
             $inventoryChallan = InventoryChallan::create($inventoryChallan);
-
         }
-
-
-
-
-
-
-
         DB::commit();
         return response()->json("Successfully Inserted",201);
 
-        }catch(Exception $e){
+        }catch(\Exception $e){
         DB::rollback();
             return response()->json(['error'=>$e->errorInfo[2]],500);
         }
