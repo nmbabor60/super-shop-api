@@ -134,6 +134,8 @@ class PurchaseController extends Controller
                 'small_unit_cost_price'=>$item->small_unit_price,
                 'big_unit_qty'=>$item->big_unit_qty?? null,
                 'small_unit_qty'=>$item->small_unit_qty,
+                'available_big_unit_qty'=>$item->big_unit_qty?? null,
+                'available_small_unit_qty'=>$item->small_unit_qty,
             ];
             $inventoryChallan = InventoryChallan::create($inventoryChallan);
         }
@@ -282,6 +284,8 @@ class PurchaseController extends Controller
                         'small_unit_cost_price'=>$item->small_unit_price,
                         'big_unit_qty'=>$item->big_unit_qty?? null,
                         'small_unit_qty'=>$item->small_unit_qty,
+                        'available_big_unit_qty'=>$item->big_unit_qty?? null,
+                        'available_small_unit_qty'=>$item->small_unit_qty,
                     ];
                     $inventoryChallan->update($inventoryChallanInput);
                 }
