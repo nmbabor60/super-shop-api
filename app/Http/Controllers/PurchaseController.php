@@ -234,6 +234,9 @@ class PurchaseController extends Controller
 
                 $item = (object)$singleItem;
                 $newProductId[] = $item->product_id;
+                if(!isset($item->big_unit_qty)){
+                    $item->big_unit_qty = 0;
+                }
                 $purchaseItemInput = [
                     'purchase_id' => $purchase->id,
                     'product_id' => $item->product_id,
@@ -261,7 +264,11 @@ class PurchaseController extends Controller
 
                 if($inventory!=''){
                                     //                  20                      -           12                     +    15 = 23
-                    $available_big_unit_qty = $inventory->available_big_unit_qty - $inventoryChallan->big_unit_qty + ($item->big_unit_qty??0);
+                    $available_big_unit_qty = 0;
+                    if($item->big_unit_qty>0){
+                        $available_big_unit_qty = $inventory->available_big_unit_qty - $inventoryChallan->big_unit_qty + $item->big_unit_qty;
+                    }
+
                     $available_small_unit_qty = $inventory->available_small_unit_qty - $inventoryChallan->small_unit_qty + $item->small_unit_qty;
 
                     $inventoryInput = [
@@ -316,6 +323,37 @@ class PurchaseController extends Controller
      */
     public function destroy($id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $purchase = Purchase::findOrFail($id);
+            $purchaseItems = PurchaseItem::where('purchase_id',$id)->get();
+            foreach($purchaseItems as $items){
+                $inventory = Inventory::where('product_id',$items->product_id)->first();
+                $availableBigUnitQty = ($inventory->available_big_unit_qty-$items->big_unit_qty)??0;
+                $availableSmallUnitQty = ($inventory->available_small_unit_qty-$items->small_unit_qty)??0;
+                if($availableBigUnitQty<0){
+                    $availableBigUnitQty = 0;
+                }
+                if($availableSmallUnitQty<0){
+                    $availableSmallUnitQty = 0;
+                }
+                $inventory->update([
+                    'available_big_unit_qty'=>$availableBigUnitQty,
+                    'available_small_unit_qty'=>$availableSmallUnitQty,
+
+                ]);
+                $items->delete();
+            }
+            //PurchaseItem::where('purchase_id',$id)->delete();
+            InventoryChallan::where('purchase_id',$id)->delete();
+            $purchase->delete();
+            DB::commit();
+            return response()->json("Successfully Deleted",200);
+
+        }catch(\Exception $e){
+            DB::rollback();
+            return response()->json(['error'=>$e->errorInfo[2]],500);
+        }
+
     }
 }
