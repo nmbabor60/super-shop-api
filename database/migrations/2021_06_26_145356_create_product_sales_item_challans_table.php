@@ -19,7 +19,8 @@ class CreateProductSalesItemChallansTable extends Migration
             $table->foreign('sales_item_id')->references('id')->on('product_sales_items')->onDelete('cascade');
             $table->bigInteger('inventory_challan_id')->unsigned();
             $table->foreign('inventory_challan_id')->references('id')->on('inventory_challans')->onDelete('cascade');
-            $table->integer('qty');
+            $table->integer('big_unit_qty')->nullable();
+            $table->integer('small_unit_qty')->nullable();
             $table->timestamps();
         });
     }

@@ -29,6 +29,7 @@ Route::group(['namespace'=>'\App\Http\Controllers','middleware'=>'auth:api'],fun
     Route::apiResource('products', 'ProductController');
     Route::apiResource('supplier', 'SupplierController');
     Route::apiResource('purchase', 'PurchaseController');
+    Route::apiResource('sales', 'SalesController');
 });
 
 Route::group(['namespace'=>'\App\Http\Controllers'],function(){

@@ -20,9 +20,7 @@ class CreateProductSalesItemsTable extends Migration
             $table->bigInteger('product_id')->unsigned();
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->float('big_unit_sales_price')->unsigned()->nullable();
-            $table->float('small_unit_sales_price')->unsigned();
-            $table->float('big_unit_cost_price')->unsigned()->nullable();
-            $table->float('small_unit_cost_price')->unsigned();
+            $table->float('small_unit_sales_price')->unsigned()->nullable();
             $table->integer('big_unit_qty')->nullable()->nullable();
             $table->integer('small_unit_qty');
             $table->timestamps();

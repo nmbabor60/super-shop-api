@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Inventory;
+use App\Models\InventoryChallan;
 use App\Models\Product;
 use App\Models\ProductSales;
+use App\Models\ProductSalesItem;
+use App\Models\ProductSalesItemChallan;
 use Illuminate\Http\Request;
+use DB,Auth;
 
 class SalesController extends Controller
 {
@@ -65,6 +70,88 @@ class SalesController extends Controller
             foreach ($request->items as $singleItem) {
                 $item = (object)$singleItem;
 
+                $inventory = Inventory::where('product_id',$item->product_id)->first();
+
+                $itemInput = [
+                    'sales_id'=>$sales->id,
+                    'product_id'=>$item->product_id,
+                    'big_unit_sales_price'=>$item->big_unit_sales_price??null,
+                    'small_unit_sales_price'=>$item->small_unit_sales_price??null,
+                    'big_unit_qty'=>$item->big_unit_qty??null,
+                    'small_unit_qty'=>$item->small_unit_qty??null,
+                ];
+                $salesItem = ProductSalesItem::create($itemInput);
+                // Check challan wise available product
+
+                // Start Big unit qty challan checking
+                if(isset($item->big_unit_qty) && $item->big_unit_qty>0 ){
+                    if($inventory->available_big_unit_qty>=$item->big_unit_qty){
+                        $bigQty = $item->big_unit_qty;
+                        while ($bigQty>0){
+                            $inventoryChallan = InventoryChallan::where('product_id',$item->product_id)->where('available_big_unit_qty','>',0)->orderBy('id','ASC')->first();
+                            if($bigQty > $inventoryChallan->available_big_unit_qty){
+                                $qty = $inventoryChallan->available_big_unit_qty;
+                                //$bigQty = $bigQty - $qty;
+                                $bigQty -= $qty;
+                            }else{
+                                $qty = $bigQty;
+                                $bigQty = 0;
+                            }
+                            $inventoryChallan->update([
+                                'available_big_unit_qty'=>$inventoryChallan->available_big_unit_qty-$qty
+                            ]);
+                            ProductSalesItemChallan::create([
+                                'sales_item_id'=>$salesItem->id,
+                                'inventory_challan_id'=>$inventoryChallan->id,
+                                'big_unit_qty'=>$qty
+                                // 'small_unit_qty'=>
+
+                            ]);
+                        }
+                        // End While loop
+                        // Update Inventory
+                        $inventory->update([
+                            'available_big_unit_qty'=>$inventory->available_big_unit_qty-$item->big_unit_qty
+                        ]);
+                    }
+                }
+                // End Big unit qty challan
+
+                // Start Small unit qty challan checking
+                if(isset($item->small_unit_qty) && $item->small_unit_qty>0 ){
+                    if($inventory->available_small_unit_qty>=$item->small_unit_qty){
+                        $smallQty = $item->small_unit_qty;
+                        while ($smallQty>0){
+                            $inventoryChallan = InventoryChallan::where('product_id',$item->product_id)->where('available_small_unit_qty','>',0)->orderBy('id','ASC')->first();
+                            if($smallQty>$inventoryChallan->available_small_unit_qty){
+                                $qty = $inventoryChallan->available_small_unit_qty;
+                                $smallQty-=$qty;
+                            }else{
+                                $qty = $inventoryChallan->available_small_unit_qty-$smallQty;
+                                $smallQty = 0;
+                            }
+                            $inventoryChallan->update([
+                                'available_small_unit_qty'=>$inventoryChallan->available_small_unit_qty-$qty
+                            ]);
+                            ProductSalesItemChallan::create([
+                                'sales_item_id'=>$salesItem->id,
+                                'inventory_challan_id'=>$inventoryChallan->id,
+                                //'big_unit_qty'=>$qty
+                                'small_unit_qty'=>$qty,
+
+                            ]);
+                        }
+                        // End While loop
+                        // Update Inventory
+                        $inventory->update([
+                            'available_small_unit_qty'=>$inventory->available_small_unit_qty-$item->small_unit_qty
+                        ]);
+                    }
+                }
+                // End Big unit qty challan
+
+
+
 
             }
 
@@ -73,7 +160,7 @@ class SalesController extends Controller
             DB::commit();
             return response()->json("Successfully Submitted", 201);
 
-        }catch(\Exception $e){
+        }catch(Exception $e){
             DB::rollback();
             return response()->json(['error'=>$e->errorInfo[2]],500);
         }
